@@ -1,0 +1,9 @@
+parameters:
+    ten24_twig.extension.money.class: Ten24\Twig\Extension\MoneyExtension
+
+services:
+   ten24_twig.extension.money:
+        class: '%ten24_twig.extension.money.class%'
+        public: false
+        tags:
+            - { name: twig.extension }

@@ -1,0 +1,9 @@
+parameters:
+    ten24_twig.extension.number.class: Ten24\Twig\Extension\NumberExtension
+
+services:
+    ten24_twig.extension.number:
+        class: '%ten24_twig.extension.number.class%'
+        public: false
+        tags:
+            - { name: twig.extension }

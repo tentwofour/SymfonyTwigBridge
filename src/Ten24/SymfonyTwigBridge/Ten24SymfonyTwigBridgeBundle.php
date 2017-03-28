@@ -19,7 +19,8 @@ class Ten24SymfonyTwigBridgeBundle extends Bundle
      */
     public function __construct($alias = 'ten24_twig')
     {
-        $this->configurationAlias = $alias;
+        // @todo - replace alias in compiler pass/Extension upon config load
+        $this->configurationAlias = 'ten24_twig';
     }
 
     /**

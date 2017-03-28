@@ -1,0 +1,9 @@
+parameters:
+    ten24_twig.extension.emailencode.class: Ten24\Twig\Extension\EmailEncodingExtension
+
+services:
+    ten24_twig.extension.emailencode:
+        class: '%ten24_twig.extension.emailencode.class%'
+        public: false
+        tags:
+            - { name: twig.extension }

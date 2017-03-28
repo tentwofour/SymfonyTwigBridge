@@ -36,23 +36,29 @@ class TwigBridgeExtension extends ConfigurableExtension
      * @param array                                                   $config
      * @param \Symfony\Component\DependencyInjection\ContainerBuilder $container
      *
-     * @return \Ten24\SymfonyTwigBridge\DependencyInjection\TwigBundleConfiguration
+     * @return \Ten24\SymfonyTwigBridge\DependencyInjection\Configuration
      */
-    public function getConfiguration(array $config,
-                                     ContainerBuilder $container)
+    public function getConfiguration(array $config, ContainerBuilder $container)
     {
-        return new TwigBundleConfiguration($this->getAlias());
+        return new Configuration($this->getAlias());
     }
 
     /**
      * @param array                                                   $configs
      * @param \Symfony\Component\DependencyInjection\ContainerBuilder $container
      */
-    public function loadInternal(array $configs,
-                                 ContainerBuilder $container)
+    public function loadInternal(array $configs, ContainerBuilder $container)
     {
-        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+        $configuration = new Configuration($this->getAlias());
+        $config        = $this->processConfiguration($configuration, $configs);
+        $loader        = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
 
-        $loader->load('services.yml');
+        // @todo - replace the ten24_twig default config alias with the actual alias, for all parameters and service defs
+
+        foreach ($config as $key => $value) {
+            if ($value) {
+                $loader->load($key.'.yml');
+            }
+        }
     }
 }

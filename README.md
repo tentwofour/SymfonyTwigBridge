@@ -2,7 +2,7 @@
 
 Bridge to provide Twig extensions (https://github.com/tentwofour/twig) into Symfony2.
 
-## Enable
+## Enable in AppKernel
 
 ```php
 class AppKernel extends Kernel
@@ -21,4 +21,16 @@ class AppKernel extends Kernel
 
 ## Usage
 
-The bundle registers all extensions from https://github.com/tentwofour/twig by default. See that bundle for extension documentation.
+By default, the bundle registers all extensions from https://github.com/tentwofour/twig by default. See that bundle for extension documentation.
+
+Any/all extensions can be disabled via bundle configuration:
+
+```yml
+# app/config.yml
+
+ten24_twig:
+    email: false
+    diff: false
+    money: false
+    number: false
+```
