@@ -32,6 +32,7 @@ class TwigBridgeExtensionTest extends \PHPUnit_Framework_TestCase
         $this->createEmptyConfiguration();
         $this->assertHasDefinition('ten24_twig.extension.emailencode');
         $this->assertHasDefinition('ten24_twig.extension.diff');
+        $this->assertHasDefinition('ten24_twig.extension.inflector');
         $this->assertHasDefinition('ten24_twig.extension.money');
         $this->assertHasDefinition('ten24_twig.extension.number');
     }
@@ -52,6 +53,17 @@ class TwigBridgeExtensionTest extends \PHPUnit_Framework_TestCase
 
         $this->assertHasDefinition('ten24_twig.extension.emailencode');
         $this->assertNotHasDefinition('ten24_twig.extension.diff');
+        $this->assertHasDefinition('ten24_twig.extension.money');
+        $this->assertHasDefinition('ten24_twig.extension.number');
+    }
+
+    public function testLoadWithDisabledInflectorExtension()
+    {
+        $this->createInflectorDisabledConfiguration();
+
+        $this->assertHasDefinition('ten24_twig.extension.emailencode');
+        $this->assertHasDefinition('ten24_twig.extension.diff');
+        $this->assertNotHasDefinition('ten24_twig.extension.inflector');
         $this->assertHasDefinition('ten24_twig.extension.money');
         $this->assertHasDefinition('ten24_twig.extension.number');
     }
@@ -82,6 +94,7 @@ class TwigBridgeExtensionTest extends \PHPUnit_Framework_TestCase
 
         $this->assertNotHasDefinition('ten24_twig.extension.emailencode');
         $this->assertNotHasDefinition('ten24_twig.extension.diff');
+        $this->assertNotHasDefinition('ten24_twig.extension.inflector');
         $this->assertNotHasDefinition('ten24_twig.extension.money');
         $this->assertNotHasDefinition('ten24_twig.extension.number');
     }
@@ -92,6 +105,7 @@ class TwigBridgeExtensionTest extends \PHPUnit_Framework_TestCase
 
         $this->assertParameter('Ten24\Twig\Extension\EmailEncodingExtension', 'ten24_twig.extension.emailencode.class');
         $this->assertParameter('Ten24\Twig\Extension\DiffExtension', 'ten24_twig.extension.diff.class');
+        $this->assertParameter('Ten24\Twig\Extension\InflectorExtension', 'ten24_twig.extension.inflector.class');
         $this->assertParameter('Ten24\Twig\Extension\MoneyExtension', 'ten24_twig.extension.money.class');
         $this->assertParameter('Ten24\Twig\Extension\NumberExtension', 'ten24_twig.extension.number.class');
     }
@@ -118,6 +132,7 @@ EOF;
         $yaml   = <<<EOF
 email: true
 diff: true
+inflector: true
 money: true
 number: true
 EOF;
@@ -131,6 +146,7 @@ EOF;
         $yaml   = <<<EOF
 email: false
 diff: false
+inflector: false
 money: false
 number: false
 EOF;
@@ -142,72 +158,79 @@ EOF;
     protected function createEmptyConfiguration()
     {
         $this->configuration = new ContainerBuilder();
-        $loader = new TwigBridgeExtension($this->defaultExtensionNamespace);
-        $config = $this->getEmptyConfig();
-        $loader->loadInternal(array($config), $this->configuration);
+        $loader              = new TwigBridgeExtension($this->defaultExtensionNamespace);
+        $config              = $this->getEmptyConfig();
+        $loader->loadInternal([$config], $this->configuration);
         $this->assertTrue($this->configuration instanceof ContainerBuilder);
     }
 
     protected function createEmailDisabledConfiguration()
     {
         $this->configuration = new ContainerBuilder();
-        $loader = new TwigBridgeExtension($this->defaultExtensionNamespace);
-        $config = $this->getFullConfig();
+        $loader              = new TwigBridgeExtension($this->defaultExtensionNamespace);
+        $config              = $this->getFullConfig();
 
         $config['email'] = false;
 
-        $loader->loadInternal(array($config), $this->configuration);
+        $loader->loadInternal([$config], $this->configuration);
         $this->assertTrue($this->configuration instanceof ContainerBuilder);
     }
 
     protected function createDiffDisabledConfiguration()
     {
         $this->configuration = new ContainerBuilder();
-        $loader = new TwigBridgeExtension($this->defaultExtensionNamespace);
-        $config = $this->getFullConfig();
+        $loader              = new TwigBridgeExtension($this->defaultExtensionNamespace);
+        $config              = $this->getFullConfig();
 
         $config['diff'] = false;
 
-        $loader->loadInternal(array($config), $this->configuration);
+        $loader->loadInternal([$config], $this->configuration);
+        $this->assertTrue($this->configuration instanceof ContainerBuilder);
+    }
+
+    protected function createInflectorDisabledConfiguration()
+    {
+        $this->configuration = new ContainerBuilder();
+        $loader              = new TwigBridgeExtension($this->defaultExtensionNamespace);
+        $config              = $this->getFullConfig();
+
+        $config['inflector'] = false;
+
+        $loader->loadInternal([$config], $this->configuration);
         $this->assertTrue($this->configuration instanceof ContainerBuilder);
     }
 
     protected function createMoneyDisabledConfiguration()
     {
         $this->configuration = new ContainerBuilder();
-        $loader = new TwigBridgeExtension($this->defaultExtensionNamespace);
-        $config = $this->getFullConfig();
+        $loader              = new TwigBridgeExtension($this->defaultExtensionNamespace);
+        $config              = $this->getFullConfig();
 
         $config['money'] = false;
 
-        $loader->loadInternal(array($config), $this->configuration);
+        $loader->loadInternal([$config], $this->configuration);
         $this->assertTrue($this->configuration instanceof ContainerBuilder);
     }
 
     protected function createNumberDisabledConfiguration()
     {
         $this->configuration = new ContainerBuilder();
-        $loader = new TwigBridgeExtension($this->defaultExtensionNamespace);
-        $config = $this->getFullConfig();
+        $loader              = new TwigBridgeExtension($this->defaultExtensionNamespace);
+        $config              = $this->getFullConfig();
 
         $config['number'] = false;
 
-        $loader->loadInternal(array($config), $this->configuration);
+        $loader->loadInternal([$config], $this->configuration);
         $this->assertTrue($this->configuration instanceof ContainerBuilder);
     }
 
     protected function createAllDisabledConfiguration()
     {
         $this->configuration = new ContainerBuilder();
-        $loader = new TwigBridgeExtension($this->defaultExtensionNamespace);
-        $config = $this->getFullConfig();
+        $loader              = new TwigBridgeExtension($this->defaultExtensionNamespace);
+        $config              = $this->getFullDisabledConfig();
 
-        $config['email'] = false;
-        $config['diff'] = false;
-        $config['money'] = false;
-        $config['number'] = false;
-
-        $loader->loadInternal(array($config), $this->configuration);
+        $loader->loadInternal([$config], $this->configuration);
         $this->assertTrue($this->configuration instanceof ContainerBuilder);
     }
 

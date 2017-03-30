@@ -31,6 +31,7 @@ Any/all extensions can be disabled via bundle configuration:
 ten24_twig:
     email: false
     diff: false
+    inflector: false
     money: false
     number: false
 ```
