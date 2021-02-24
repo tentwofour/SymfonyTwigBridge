@@ -1,40 +1,31 @@
 <?php
 
-namespace Ten24\Tests\SymfonyTwigBridge\DependencyInjection;
+namespace Ten24\Tests\Bundle\TwigBundle\DependencyInjection;
 
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Yaml\Parser;
-use Ten24\SymfonyTwigBridge\DependencyInjection\TwigBridgeExtension;
+use Ten24\Bundle\TwigBundle\DependencyInjection\Ten24TwigExtension;
 
-class TwigBridgeExtensionTest extends \PHPUnit_Framework_TestCase
+class TwigBridgeExtensionTest extends TestCase
 {
     /** @var ContainerBuilder */
-    protected $configuration;
+    protected $container;
 
-    protected $defaultExtensionNamespace = 'ten24_twig';
-
-    protected $customExtensionNamespace = 'ten24_custom_twig';
-
-    public function testExtensionConstructorWithDefaultNamespace()
+    public function testExtensionConstructor()
     {
-        $loader = new TwigBridgeExtension($this->defaultExtensionNamespace);
-        self::assertEquals($this->defaultExtensionNamespace, $loader->getAlias());
-    }
-
-    public function testExtensionConstructorWithCustomNamespace()
-    {
-        $loader = new TwigBridgeExtension($this->customExtensionNamespace);
-        self::assertEquals($this->customExtensionNamespace, $loader->getAlias());
+        $loader = new Ten24TwigExtension();
+        self::assertEquals('ten24_twig', $loader->getAlias());
     }
 
     public function testLoadWithEmptyConfiguration()
     {
         $this->createEmptyConfiguration();
-        $this->assertHasDefinition('ten24_twig.extension.emailencode');
-        $this->assertHasDefinition('ten24_twig.extension.diff');
-        $this->assertHasDefinition('ten24_twig.extension.inflector');
-        $this->assertHasDefinition('ten24_twig.extension.money');
-        $this->assertHasDefinition('ten24_twig.extension.number');
+        $this->assertNotHasDefinition('ten24_twig.extension.emailencode');
+        $this->assertNotHasDefinition('ten24_twig.extension.diff');
+        $this->assertNotHasDefinition('ten24_twig.extension.inflector');
+        $this->assertNotHasDefinition('ten24_twig.extension.money');
+        $this->assertNotHasDefinition('ten24_twig.extension.number');
     }
 
     public function testLoadWithDisabledEmailExtension()
@@ -157,81 +148,81 @@ EOF;
 
     protected function createEmptyConfiguration()
     {
-        $this->configuration = new ContainerBuilder();
-        $loader              = new TwigBridgeExtension($this->defaultExtensionNamespace);
-        $config              = $this->getEmptyConfig();
-        $loader->loadInternal([$config], $this->configuration);
-        $this->assertTrue($this->configuration instanceof ContainerBuilder);
+        $this->container = new ContainerBuilder();
+        $loader          = new Ten24TwigExtension();
+        $config          = $this->getEmptyConfig();
+        $loader->load([$config], $this->container);
+        $this->assertTrue($this->container instanceof ContainerBuilder);
     }
 
     protected function createEmailDisabledConfiguration()
     {
-        $this->configuration = new ContainerBuilder();
-        $loader              = new TwigBridgeExtension($this->defaultExtensionNamespace);
+        $this->container = new ContainerBuilder();
+        $loader          = new Ten24TwigExtension();
         $config              = $this->getFullConfig();
 
         $config['email'] = false;
 
-        $loader->loadInternal([$config], $this->configuration);
-        $this->assertTrue($this->configuration instanceof ContainerBuilder);
+        $loader->load([$config], $this->container);
+        $this->assertTrue($this->container instanceof ContainerBuilder);
     }
 
     protected function createDiffDisabledConfiguration()
     {
-        $this->configuration = new ContainerBuilder();
-        $loader              = new TwigBridgeExtension($this->defaultExtensionNamespace);
+        $this->container = new ContainerBuilder();
+        $loader          = new Ten24TwigExtension();
         $config              = $this->getFullConfig();
 
         $config['diff'] = false;
 
-        $loader->loadInternal([$config], $this->configuration);
-        $this->assertTrue($this->configuration instanceof ContainerBuilder);
+        $loader->load([$config], $this->container);
+        $this->assertTrue($this->container instanceof ContainerBuilder);
     }
 
     protected function createInflectorDisabledConfiguration()
     {
-        $this->configuration = new ContainerBuilder();
-        $loader              = new TwigBridgeExtension($this->defaultExtensionNamespace);
+        $this->container = new ContainerBuilder();
+        $loader          = new Ten24TwigExtension();
         $config              = $this->getFullConfig();
 
         $config['inflector'] = false;
 
-        $loader->loadInternal([$config], $this->configuration);
-        $this->assertTrue($this->configuration instanceof ContainerBuilder);
+        $loader->load([$config], $this->container);
+        $this->assertTrue($this->container instanceof ContainerBuilder);
     }
 
     protected function createMoneyDisabledConfiguration()
     {
-        $this->configuration = new ContainerBuilder();
-        $loader              = new TwigBridgeExtension($this->defaultExtensionNamespace);
+        $this->container = new ContainerBuilder();
+        $loader          = new Ten24TwigExtension();
         $config              = $this->getFullConfig();
 
         $config['money'] = false;
 
-        $loader->loadInternal([$config], $this->configuration);
-        $this->assertTrue($this->configuration instanceof ContainerBuilder);
+        $loader->load([$config], $this->container);
+        $this->assertTrue($this->container instanceof ContainerBuilder);
     }
 
     protected function createNumberDisabledConfiguration()
     {
-        $this->configuration = new ContainerBuilder();
-        $loader              = new TwigBridgeExtension($this->defaultExtensionNamespace);
+        $this->container = new ContainerBuilder();
+        $loader          = new Ten24TwigExtension();
         $config              = $this->getFullConfig();
 
         $config['number'] = false;
 
-        $loader->loadInternal([$config], $this->configuration);
-        $this->assertTrue($this->configuration instanceof ContainerBuilder);
+        $loader->load([$config], $this->container);
+        $this->assertTrue($this->container instanceof ContainerBuilder);
     }
 
     protected function createAllDisabledConfiguration()
     {
-        $this->configuration = new ContainerBuilder();
-        $loader              = new TwigBridgeExtension($this->defaultExtensionNamespace);
+        $this->container = new ContainerBuilder();
+        $loader          = new Ten24TwigExtension();
         $config              = $this->getFullDisabledConfig();
 
-        $loader->loadInternal([$config], $this->configuration);
-        $this->assertTrue($this->configuration instanceof ContainerBuilder);
+        $loader->load([$config], $this->container);
+        $this->assertTrue($this->container instanceof ContainerBuilder);
     }
 
     /**
@@ -240,7 +231,7 @@ EOF;
      */
     private function assertParameter($value, $key)
     {
-        self::assertSame($value, $this->configuration->getParameter($key), sprintf('%s parameter is correct', $key));
+        self::assertSame($value, $this->container->getParameter($key), sprintf('%s parameter is correct', $key));
     }
 
     /**
@@ -248,7 +239,7 @@ EOF;
      */
     private function assertHasDefinition($id)
     {
-        self::assertTrue(($this->configuration->hasDefinition($id) ?: $this->configuration->hasAlias($id)));
+        self::assertTrue(($this->container->hasDefinition($id) ?: $this->container->hasAlias($id)));
     }
 
     /**
@@ -256,11 +247,11 @@ EOF;
      */
     private function assertNotHasDefinition($id)
     {
-        self::assertFalse(($this->configuration->hasDefinition($id) ?: $this->configuration->hasAlias($id)));
+        self::assertFalse(($this->container->hasDefinition($id) ?: $this->container->hasAlias($id)));
     }
 
     protected function tearDown()
     {
-        unset($this->configuration);
+        unset($this->container);
     }
 }
