@@ -94,11 +94,12 @@ class TwigBridgeExtensionTest extends TestCase
     {
         $this->createEmptyConfiguration();
 
-        $this->assertParameter('Ten24\Twig\Extension\EmailEncodingExtension', 'ten24_twig.extension.emailencode.class');
-        $this->assertParameter('Ten24\Twig\Extension\DiffExtension', 'ten24_twig.extension.diff.class');
-        $this->assertParameter('Ten24\Twig\Extension\InflectorExtension', 'ten24_twig.extension.inflector.class');
-        $this->assertParameter('Ten24\Twig\Extension\MoneyExtension', 'ten24_twig.extension.money.class');
-        $this->assertParameter('Ten24\Twig\Extension\NumberExtension', 'ten24_twig.extension.number.class');
+        // Should all be unset
+        $this->assertNotParameter('Ten24\Twig\Extension\EmailEncodingExtension', 'ten24_twig.extension.emailencode.class');
+        $this->assertNotParameter('Ten24\Twig\Extension\DiffExtension', 'ten24_twig.extension.diff.class');
+        $this->assertNotParameter('Ten24\Twig\Extension\InflectorExtension', 'ten24_twig.extension.inflector.class');
+        $this->assertNotParameter('Ten24\Twig\Extension\MoneyExtension', 'ten24_twig.extension.money.class');
+        $this->assertNotParameter('Ten24\Twig\Extension\NumberExtension', 'ten24_twig.extension.number.class');
     }
 
     /**
@@ -110,6 +111,7 @@ class TwigBridgeExtensionTest extends TestCase
     {
         $yaml   = <<<EOF
 EOF;
+
         $parser = new Parser();
 
         return $parser->parse($yaml);
@@ -235,6 +237,16 @@ EOF;
     }
 
     /**
+     * @param mixed  $value
+     * @param string $key
+     */
+    private function assertNotParameter($value, $key)
+    {
+        self::expectException('Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException');
+        self::assertEmpty($value, $this->container->getParameter($key), sprintf('%s parameter is correct', $key));
+    }
+
+    /**
      * @param string $id
      */
     private function assertHasDefinition($id)
@@ -250,7 +262,7 @@ EOF;
         self::assertFalse(($this->container->hasDefinition($id) ?: $this->container->hasAlias($id)));
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->container);
     }
